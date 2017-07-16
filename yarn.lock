@@ -16,6 +16,12 @@
   dependencies:
     "@types/node" "*"
 
+"@types/levelup@^0.0.30":
+  version "0.0.30"
+  resolved "https://registry.yarnpkg.com/@types/levelup/-/levelup-0.0.30.tgz#869dd7a82cdbe5983e737006a1ff4e42fac97ca7"
+  dependencies:
+    "@types/node" "*"
+
 "@types/mocha@^2.2.41":
   version "2.2.41"
   resolved "https://registry.yarnpkg.com/@types/mocha/-/mocha-2.2.41.tgz#e27cf0817153eb9f2713b2d3f6c68f1e1c3ca608"
@@ -1524,6 +1530,10 @@ os-homedir@^1.0.0, os-homedir@^1.0.1:
 p-map@^1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/p-map/-/p-map-1.1.1.tgz#05f5e4ae97a068371bc2a5cc86bfbdbc19c4ae7a"
+
+pako@^1.0.5:
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/pako/-/pako-1.0.5.tgz#d2205dfe5b9da8af797e7c163db4d1f84e4600bc"
 
 parse-filepath@^1.0.1:
   version "1.0.1"
