@@ -73,6 +73,8 @@ interface IHugoDoc {
   tags?: string[]
   author?: string[]
   body?: string
+
+  [key: string]: any
 }
 
 const hugoize = (doc: IHugoDoc) => {
@@ -115,6 +117,18 @@ const hugoize = (doc: IHugoDoc) => {
     loc.dir = '/' + loc.dir
 
     doc.relativeUrl = path.format(loc)
+  }
+
+  // de-capitalize front-matter keys like Tags, Categories, Description, etc. for better searching later
+  for (const k in doc) {
+    if (!doc.hasOwnProperty(k)) {
+      continue
+    }
+    const lowerk = k.toLowerCase()
+    if (lowerk !== k) {
+      doc[lowerk] = doc[k]
+      delete(doc[k])
+    }
   }
 
   return doc
@@ -210,7 +224,6 @@ module.exports = (gulp, c?: Console) => {
 
   gulp.task('build-search-index', (done) => {
     const options = {
-      indexes: levelup('/some/location', { db: require('memdown') }),
     }
     searchIndex(options, (openDatabaseError, index) => {
       if (openDatabaseError) {
