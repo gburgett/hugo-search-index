@@ -6,7 +6,9 @@ import * as zlib from 'zlib'
 import * as chalk from 'chalk'
 import * as fs from 'fs-extra'
 import * as JSONStream from 'JSONStream'
+import * as levelup from 'levelup'
 import * as marked from 'marked'
+import * as memdown from 'memdown'
 import * as striptags from 'striptags'
 import * as toml from 'toml'
 import * as File from 'vinyl'
@@ -208,6 +210,7 @@ module.exports = (gulp, c?: Console) => {
 
   gulp.task('build-search-index', (done) => {
     const options = {
+      indexes: levelup('/some/location', { db: require('memdown') }),
     }
     searchIndex(options, (openDatabaseError, index) => {
       if (openDatabaseError) {
