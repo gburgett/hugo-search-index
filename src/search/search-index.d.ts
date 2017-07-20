@@ -27,7 +27,8 @@ declare namespace search_index {
          */
         batchsize?: number
 
-        indexes?: LevelUp
+        /** A LevelUp instance */
+        indexes?: any
         
         /** Contains field specific overrides to global settings */
         fieldOptions?: any

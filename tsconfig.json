@@ -4,7 +4,6 @@
         "target": "es2015",
         "module": "commonjs",
         "experimentalDecorators": true,
-        "jsx": "react",
         "noImplicitUseStrict": true
     },
     "exclude": [
