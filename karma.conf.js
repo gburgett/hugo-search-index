@@ -26,6 +26,8 @@ module.exports = (config) => {
         timeout: 30000    // 30 sec
       }
     },
+    browserDisconnectTimeout:  5000,
+    browserNoActivityTimeout: 30000,
 
     logLevel: 'LOG_DEBUG',
 

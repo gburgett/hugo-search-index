@@ -4,10 +4,6 @@ import * as chai from 'chai'
 import { SearchStore } from './search'
 const expect = chai.expect
 
-window.addEventListener('beforeunload', function() {
-  debugger
-})
-
 describe('script bundle', () => {
 
   let div: HTMLElement
