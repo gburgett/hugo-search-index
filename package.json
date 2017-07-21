@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "lint": "echo \"\\033[1;32mdouble-checking source files...\\033[0m\" && tslint 'src/**/*.ts?(x)' -e '**/*.d.ts'",
-    "test": "mocha -t 5000 --compilers ts:ts-node/register --recursive 'src/**/*.test.ts?(x)'"
+    "test-mocha": "mocha -t 5000 --compilers ts:ts-node/register --recursive 'src/gulp/**/*.test.ts?(x)'",
+    "test-karma": "karma start --single-run",
+    "test": "npm run test-mocha && npm run test-karma"
   },
   "keywords": [
     "hugo",
@@ -19,7 +21,6 @@
     "@types/chai": "^4.0.1",
     "@types/chalk": "^0.4.31",
     "@types/fs-extra": "^3.0.3",
-    "@types/levelup": "^0.0.30",
     "@types/mocha": "^2.2.41",
     "@types/node": "^8.0.13",
     "@types/sinon": "^2.3.2",
@@ -35,6 +36,10 @@
     "gulp-typescript": "^3.2.0",
     "gulp-util": "^3.0.8",
     "gutil": "^1.6.4",
+    "karma": "^1.7.0",
+    "karma-firefox-launcher": "^1.0.1",
+    "karma-mocha": "^1.3.0",
+    "karma-webpack": "^2.0.4",
     "marked": "^0.3.6",
     "mocha": "^3.4.2",
     "search-index": "^0.13.0",
@@ -42,7 +47,6 @@
     "ts-node": "^3.2.0",
     "tslint": "^5.5.0",
     "typescript": "^2.4.1",
-    "watchify": "^3.9.0",
     "webpack": "^2.4.1"
   },
   "dependencies": {

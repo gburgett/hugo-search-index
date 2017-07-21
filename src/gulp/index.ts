@@ -8,7 +8,6 @@ import * as fs from 'fs-extra'
 import * as JSONStream from 'JSONStream'
 import * as levelup from 'levelup'
 import * as marked from 'marked'
-import * as memdown from 'memdown'
 import * as striptags from 'striptags'
 import * as toml from 'toml'
 import * as File from 'vinyl'
@@ -76,7 +75,7 @@ interface IHugoDoc {
 }
 
 const searchIndexOptions = {
-    keySeparator: '~'
+    keySeparator: '~',
   }
 
 const hugoize = (doc: IHugoDoc) => {
@@ -183,7 +182,7 @@ const invertDocumentVector = () => new Transform({
 
   transform(obj: any, encoding, callback) {
     const doc = obj as { key: string, value: string[] }
-    if(doc.key && doc.key.startsWith('DOCUMENT-VECTOR')){
+    if (doc.key && doc.key.startsWith('DOCUMENT-VECTOR')) {
       const vector = doc.key.split(searchIndexOptions.keySeparator)
       const tmp = vector[1]   // tmp = fieldName
       vector[1] = vector[2]   // move document ID to correct spot for web bundle

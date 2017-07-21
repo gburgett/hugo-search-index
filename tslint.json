@@ -9,7 +9,8 @@
         "quotemark": [true, "single", "avoid-escape"],
         "max-classes-per-file": [0],
         "object-literal-sort-keys": false,
-        "max-line-length": [0]
+        "max-line-length": [0],
+        "object-literal-shorthand": false
     },
     "rulesDirectory": []
 }

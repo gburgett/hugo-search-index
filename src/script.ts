@@ -1,11 +1,12 @@
+// tslint:disable:prefer-for-of no-console
 
-import { InitSearch, SearchStore, SearchResult } from './search'
+import { InitSearch, SearchResult, SearchStore } from './search'
 
 // tslint:disable-next-line:interface-over-type-literal
 declare type Window = {
   CustomEvent?: Event,
   Search: SearchStore,
-  language: string
+  language: string,
 }
 
 ((w: Window, d: Document) => {
@@ -33,7 +34,7 @@ declare type Window = {
     me = d
     lang = w.language
   }
-  if (!url || url == '') {
+  if (!url || url === '') {
     // fallback to default search index location
     url = '/search_index.gz'
   }
@@ -57,14 +58,14 @@ declare type Window = {
 
   function getSearchInput(searchForm: HTMLFormElement): HTMLInputElement {
     const inputs = searchForm.getElementsByTagName('input')
-    for (var i = 0; i < inputs.length; ++i) {
-      if(inputs[i].type == 'search') {
+    for (let i = 0; i < inputs.length; ++i) {
+      if (inputs[i].type === 'search') {
         return inputs[i]
       }
     }
       // no 'search' inputs, find a text input
-    for (var i = 0; i < inputs.length; ++i) {
-      if(inputs[i].type == 'text') {
+    for (let i = 0; i < inputs.length; ++i) {
+      if (inputs[i].type === 'text') {
         return inputs[i]
       }
     }
@@ -82,20 +83,20 @@ declare type Window = {
 
     function resultToRow(r: SearchResult, row: HTMLTableRowElement): void {
       const date = r.document.date ? new Date(r.document.date).toLocaleDateString() : undefined
-      let body: string = r.document.body
-      if (body) {
-        body = body.substring(0, 150) + '...'
+      let docBody: string = r.document.body
+      if (docBody) {
+        docBody = docBody.substring(0, 150) + '...'
       }
-      row.innerHTML = 
+      row.innerHTML =
 `<td>
   <h3><a href=${r.document.relativeUrl}>${r.document.title || r.document.name}</a></h3>
   <span class="date">${date}</span>
   <div class="body">
-      ${body}
+      ${docBody}
   </div>
 </td>`
     }
-    
+
     let i = 0
     for (; i < body.rows.length; i++) {
       // overwrite existing rows
@@ -112,7 +113,7 @@ declare type Window = {
       body.deleteRow(i)
     }
   }
-  
+
   InitSearch(url, (err, store) => {
     if (err) {
       fireError('Error loading search index: ' + err)
@@ -126,14 +127,14 @@ declare type Window = {
     if (searchForm && searchForm instanceof HTMLFormElement) {
       searchForm.onsubmit = (evt) => {
         const input = getSearchInput(searchForm)
-        if(!input) {
+        if (!input) {
           fireError('Unable to find <input type="search"> inside <form id="searchForm">')
           return
         }
 
         const text = input.value
         w.Search.runSearch(text, lang, (error, results) => {
-          if(error) {
+          if (error) {
             fireError(error)
             return
           }

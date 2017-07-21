@@ -156,15 +156,15 @@ describe('SearchStore', () => {
 
       store.runSearch('qwertyuiop', (err2) => {
         if (err2) { done(err2); return }
-      console.log('search 2 finished')
+        console.log('search 2 finished')
 
         store.runSearch('FTP account', (err3) => {
           if (err3) { done(err3); return }
-      console.log('search 3 finished')
+          console.log('search 3 finished')
 
           store.runSearch('mnbvvccx', (err4) => {
             if (err4) { done(err4); return }
-      console.log('search 4 finished')
+            console.log('search 4 finished')
 
               //  assert
             expect(store.queryHistory.slice()).to.deep.equal([

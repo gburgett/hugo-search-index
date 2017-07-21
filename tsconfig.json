@@ -4,7 +4,12 @@
         "target": "es2015",
         "module": "commonjs",
         "experimentalDecorators": true,
-        "noImplicitUseStrict": true
+        "noImplicitUseStrict": true,
+        "typeRoots": [ "./types", "./node_modules/@types"],
+        "baseUrl": ".",
+        "paths": {
+            "*": ["./types/*"]
+        }
     },
     "exclude": [
         "node_modules"

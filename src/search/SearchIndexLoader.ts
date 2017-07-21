@@ -1,6 +1,6 @@
 import * as pako from 'pako'
-import {Readable} from 'stream'
 import {Index, Options, SearchIndexLib} from 'search-index'
+import {Readable} from 'stream'
 
 /**
  * Converts an array buffer to a string
