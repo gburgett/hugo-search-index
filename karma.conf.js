@@ -21,7 +21,7 @@ module.exports = (config) => {
         // change Karma's debug.html to the mocha web reporter
         // reporter: 'html',
 
-        timeout: 10000    // 10 sec
+        timeout: 30000    // 30 sec
       }
     },
 
