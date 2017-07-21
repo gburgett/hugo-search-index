@@ -26,7 +26,9 @@ export function InitSearch(indexUrl: string, cb: (err, store?: SearchStore) => v
     if (downloadErr) { cb(downloadErr); return }
     console.log('index downloaded, size: ' + (data.length / 1024).toFixed(1) + ' KB')
 
-    const loader = new SearchIndexLoader()
+    const loader = new SearchIndexLoader(undefined, {
+      keySeparator: '~',
+    })
     loader.load(data, (loadErr, index) => {
       if (loadErr) { cb(loadErr); return }
 

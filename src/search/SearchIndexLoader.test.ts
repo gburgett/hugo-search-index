@@ -26,7 +26,9 @@ describe('loadSearchIndex', () => {
   })
 
   it('should load without errors', (done) => {
-    const loader = new SearchIndexLoader()
+    const loader = new SearchIndexLoader(undefined, {
+        keySeparator: '~',
+      })
 
     downloadIndex(filename, (downloadErr, data) => {
       if (downloadErr) {
@@ -50,7 +52,7 @@ describe('loadSearchIndex', () => {
             done(errCD)
             return
           }
-          expect(count).to.equal(48)
+          expect(count).to.equal(49)
           done()
         })
       })
@@ -59,7 +61,9 @@ describe('loadSearchIndex', () => {
   })
 
   it('should get a single doc', (done) => {
-    const loader = new SearchIndexLoader()
+    const loader = new SearchIndexLoader(undefined, {
+        keySeparator: '~',
+      })
 
     downloadIndex(filename, (downloadErr, data) => {
       if (downloadErr) {
@@ -93,7 +97,9 @@ describe('loadSearchIndex', () => {
   })
 
   it('should search by tags', (done) => {
-    const loader = new SearchIndexLoader()
+    const loader = new SearchIndexLoader(undefined, {
+        keySeparator: '~',
+      })
 
     downloadIndex(filename, (downloadErr, data) => {
       if (downloadErr) {
@@ -129,7 +135,9 @@ describe('loadSearchIndex', () => {
   })
 
   it('should search by search string', (done) => {
-    const loader = new SearchIndexLoader()
+    const loader = new SearchIndexLoader(undefined, {
+        keySeparator: '~',
+      })
 
     downloadIndex(filename, (downloadErr, data) => {
       if (downloadErr) {

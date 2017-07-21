@@ -178,7 +178,9 @@ describe('SearchStore', () => {
 
 function buildIndex(cb: (err, idx?: Index) => void) {
 
-  const loader = new SearchIndexLoader()
+  const loader = new SearchIndexLoader(undefined, {
+      keySeparator: '~',
+    })
 
   downloadIndex('/base/src/search/test_search_index.gz', (downloadErr, gzippedContents) => {
     if (downloadErr) {

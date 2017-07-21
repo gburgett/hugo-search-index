@@ -75,6 +75,10 @@ interface IHugoDoc {
   [key: string]: any
 }
 
+const searchIndexOptions = {
+    keySeparator: '~'
+  }
+
 const hugoize = (doc: IHugoDoc) => {
   /*
   { id: 'post/2017-04-18_hosting_php_server_tutorial.md',
@@ -169,8 +173,34 @@ const buildDocument = () => new Transform({
   },
 })
 
+/**
+ * Workaround for https://github.com/fergiemcdowall/search-index/issues/394 -
+ * in the web version, DOCUMENT-VECTOR has a different field order.  So when we load up the
+ * search index in Firefox for example, it needs to have the fields swapped.
+ */
+const invertDocumentVector = () => new Transform({
+  objectMode: true,
+
+  transform(obj: any, encoding, callback) {
+    const doc = obj as { key: string, value: string[] }
+    if(doc.key && doc.key.startsWith('DOCUMENT-VECTOR')){
+      const vector = doc.key.split(searchIndexOptions.keySeparator)
+      const tmp = vector[1]   // tmp = fieldName
+      vector[1] = vector[2]   // move document ID to correct spot for web bundle
+      vector[2] = tmp         // move fieldName to correct spot for web bundle
+      doc.key = vector.join(searchIndexOptions.keySeparator)
+
+      callback(null, doc)
+      return
+    }
+
+    callback(null, obj)
+  },
+})
+
 function exportIndex(index, file: string, c: Console, done: (err?) => void) {
   index.dbReadStream({ gzip: true })
+    .pipe(invertDocumentVector())
     .pipe(JSONStream.stringify(false))
     .pipe(zlib.createGzip())
     .pipe(fs.createWriteStream(file))
@@ -220,10 +250,8 @@ module.exports = (gulp, c?: Console) => {
   })
 
   gulp.task('build-search-index', (done) => {
-    const options = {
-    }
     const searchIndex = require('search-index')
-    searchIndex(options, (openDatabaseError, index) => {
+    searchIndex(searchIndexOptions, (openDatabaseError, index) => {
       if (openDatabaseError) {
         done(openDatabaseError)
         return

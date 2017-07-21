@@ -39,7 +39,7 @@ export declare class Options {
     nGramLength?: number | Array<number> | { gte: number, lte: number }
 
     /** Specifies how to split strings into phrases. See https://www.npmjs.com/package/term-vector for examples */
-    separator?: string
+    keySeparator?: string
 
     /** An array of stopwords */
     stopwords?: Array<string>
