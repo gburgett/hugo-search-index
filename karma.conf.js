@@ -13,6 +13,8 @@ module.exports = (config) => {
     files: [
       'node_modules/search-index/dist/search-index.js',
       'src/search/**/*[!d].ts',
+      { pattern: 'src/script.ts', included: false, served: true },
+      'src/script.test.ts',
       { pattern: 'src/search/*.gz', watched: false, included: false, served: true, nocache: false }
     ],
 
@@ -28,7 +30,7 @@ module.exports = (config) => {
     logLevel: 'LOG_DEBUG',
 
     preprocessors: {
-      'src/search/*.ts': ['webpack']
+      'src/**/*.ts': ['webpack']
     },
 
     mime: {

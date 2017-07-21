@@ -28,6 +28,9 @@ export declare class Options {
 
     /** A LevelUp instance */
     indexes?: any
+
+    /** The path where the LevelUp database is stored */
+    indexPath?: string
     
     /** Contains field specific overrides to global settings */
     fieldOptions?: any

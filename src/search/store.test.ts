@@ -3,8 +3,6 @@
 import * as chai from 'chai'
 const expect = chai.expect
 
-import * as levelup from 'levelup'
-
 import {Index, Options} from 'search-index'
 import SearchIndexLoader from './SearchIndexLoader'
 import SearchStore from './store'
@@ -186,6 +184,7 @@ function buildIndex(cb: (err, idx?: Index) => void) {
 
   const loader = new SearchIndexLoader(undefined, {
       keySeparator: '~',
+      indexPath: 'test.store.' + Math.random(),
     })
 
   downloadIndex('/base/src/search/test_search_index.gz', (downloadErr, gzippedContents) => {

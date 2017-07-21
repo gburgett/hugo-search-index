@@ -28,6 +28,7 @@ describe('loadSearchIndex', () => {
   it('should load without errors', (done) => {
     const loader = new SearchIndexLoader(undefined, {
         keySeparator: '~',
+        indexPath: 'test.SearchIndexLoader.1',
       })
 
     downloadIndex(filename, (downloadErr, data) => {
@@ -63,6 +64,7 @@ describe('loadSearchIndex', () => {
   it('should get a single doc', (done) => {
     const loader = new SearchIndexLoader(undefined, {
         keySeparator: '~',
+        indexPath: 'test.SearchIndexLoader.2',
       })
 
     downloadIndex(filename, (downloadErr, data) => {
@@ -99,6 +101,7 @@ describe('loadSearchIndex', () => {
   it('should search by tags', (done) => {
     const loader = new SearchIndexLoader(undefined, {
         keySeparator: '~',
+        indexPath: 'test.SearchIndexLoader.3',
       })
 
     downloadIndex(filename, (downloadErr, data) => {
@@ -137,6 +140,7 @@ describe('loadSearchIndex', () => {
   it('should search by search string', (done) => {
     const loader = new SearchIndexLoader(undefined, {
         keySeparator: '~',
+        indexPath: 'test.SearchIndexLoader.4',
       })
 
     downloadIndex(filename, (downloadErr, data) => {

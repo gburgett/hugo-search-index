@@ -42,7 +42,7 @@ declare type Window = {
   function fireEvent(name: string, detail: any): void {
     let event
     if (w.CustomEvent) {
-      event = new CustomEvent(name, {detail: detail})
+      event = new CustomEvent(name, {bubbles: true, cancelable: true, detail: detail})
     } else {
       event = document.createEvent('CustomEvent')
       event.initCustomEvent(name, true, true, detail)
@@ -89,7 +89,7 @@ declare type Window = {
       }
       row.innerHTML =
 `<td>
-  <h3><a href=${r.document.relativeUrl}>${r.document.title || r.document.name}</a></h3>
+  <h3><a href=${r.document.relativeurl}>${r.document.title || r.document.name}</a></h3>
   <span class="date">${date}</span>
   <div class="body">
       ${docBody}
@@ -114,6 +114,7 @@ declare type Window = {
     }
   }
 
+  console.log('initializing search with index ', url, 'lang', lang)
   InitSearch(url, (err, store) => {
     if (err) {
       fireError('Error loading search index: ' + err)
@@ -126,6 +127,7 @@ declare type Window = {
     const output = document.getElementById('searchResults')
     if (searchForm && searchForm instanceof HTMLFormElement) {
       searchForm.onsubmit = (evt) => {
+        evt.preventDefault()
         const input = getSearchInput(searchForm)
         if (!input) {
           fireError('Unable to find <input type="search"> inside <form id="searchForm">')
@@ -139,10 +141,10 @@ declare type Window = {
             return
           }
 
-          fireEvent('searchIndexResults', { results: results })
           if (output && output instanceof HTMLTableElement) {
             writeSearchResults(output, results)
           }
+          fireEvent('searchIndexResults', { results: results })
         })
       }
     }
