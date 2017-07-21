@@ -37,7 +37,7 @@ const config = {
 
   context: path.join(__dirname, 'src'),
   entry: {
-    search: ['./search/index.ts']
+    search: ['./script.ts']
   },
   output: {
     path: path.join(__dirname, 'dist/'),

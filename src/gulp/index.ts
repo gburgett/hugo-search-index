@@ -15,8 +15,6 @@ import * as File from 'vinyl'
 
 import parser from './front_matter_parser'
 
-import * as searchIndex from 'search-index'
-
 /*
 { languageCode: 'en-us',
   baseURL: 'https://cru-albania-ds.gitlab.io/',
@@ -182,21 +180,20 @@ function exportIndex(index, file: string, c: Console, done: (err?) => void) {
           done(statErr)
           return
         }
-        if (filestats.size < 100) {
+        if (filestats.size < 50) {
           done(`Error writing out the search index!  The resulting filesize is ${filestats.size} bytes!`)
           return
         }
 
         if (c) {
+          c.log(chalk.gray(`wrote out public/search_index.gz with file size ${(filestats.size / 1024).toFixed(1)} KB.`))
+
           if (filestats.size > 4 * 1024 * 1024) {
             c.log(chalk.red(`gzipped search index is ${(filestats.size / 1024 / 1024).toFixed(1)} MB! This is a lot to download.  Find a way to reduce the size or improve caching.`))
             return
           } else if (filestats.size > 1 * 1024 * 1024) {
             c.log(chalk.yellow(`gzipped search index is ${(filestats.size / 1024).toFixed(1)} KB!  ` +
                 "That's starting to get big."))
-
-          } else {
-            c.log(chalk.gray(`wrote out public/search_index.gz with file size ${(filestats.size / 1024).toFixed(1)} KB.`))
           }
         }
 
@@ -225,6 +222,7 @@ module.exports = (gulp, c?: Console) => {
   gulp.task('build-search-index', (done) => {
     const options = {
     }
+    const searchIndex = require('search-index')
     searchIndex(options, (openDatabaseError, index) => {
       if (openDatabaseError) {
         done(openDatabaseError)
@@ -259,6 +257,8 @@ module.exports = (gulp, c?: Console) => {
 
             if (c) { c.log(chalk.gray(`loaded ${count} documents in search index.  Exporting to ${exportFile}`)) }
             exportIndex(index, exportFile, c, (exportErr) => {
+              if (exportErr) { done(exportErr); return }
+
               if (c) { c.log(chalk.gray('closing temporary search index...')) }
               index.close((closeErr) => {
                 if (closeErr) {

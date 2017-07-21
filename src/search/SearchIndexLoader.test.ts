@@ -1,37 +1,16 @@
 /* tslint:disable:no-unused-expression max-line-length no-var-requires no-console */
 
 import * as chai from 'chai'
-import * as fs from 'fs-extra'
-import * as levelup from 'levelup'
-import * as memdown from 'memdown'
-import * as path from 'path'
+import {Index} from 'search-index'
 const expect = chai.expect
 
 import SearchIndexLoader from './SearchIndexLoader'
 
-const filename = __dirname + '/test_search_index.gz'
+const filename = '/base/src/search/test_search_index.gz'
 
 describe('loadSearchIndex', () => {
 
-  let levelDb: levelup.LevelUp
-  let currentsi: search_index.Index
-
-  beforeEach((done) => {
-    const db = levelup('si', {
-      db: memdown,
-      valueEncoding: 'json',
-    })
-
-    db.open((err) => {
-      if (err) {
-        done(err)
-        return
-      }
-      console.log('levelup instance opened')
-      levelDb = db
-      done()
-    })
-  })
+  let currentsi: Index
 
   afterEach((done) => {
     if (currentsi) {
@@ -40,7 +19,6 @@ describe('loadSearchIndex', () => {
           console.log(err)
         }
         currentsi = undefined
-        levelDb = undefined
         console.log('levelup instance closed')
         done(err)
       })
@@ -48,17 +26,21 @@ describe('loadSearchIndex', () => {
   })
 
   it('should load without errors', (done) => {
-    const loader = new SearchIndexLoader(require('search-index'), {
-      // indexes: levelDb,
-    })
+    const loader = new SearchIndexLoader()
 
-    fs.readFile(filename, (readErr, buff) => {
-      if (readErr) { done(readErr); return }
-      loader.load(buff, (loadErr, si) => {
+    downloadIndex(filename, (downloadErr, data) => {
+      if (downloadErr) {
+        done(downloadErr)
+        return
+      }
+
+      console.log('LOADING....')
+      loader.load(data, (loadErr, si) => {
         if (loadErr) {
           done(loadErr)
           return
         }
+        console.log('LOADED!')
         currentsi = si
 
         expect(si).to.not.be.null
@@ -77,13 +59,15 @@ describe('loadSearchIndex', () => {
   })
 
   it('should get a single doc', (done) => {
-    const loader = new SearchIndexLoader(require('search-index'), {
-        indexes: levelDb,
-      })
+    const loader = new SearchIndexLoader()
 
-    fs.readFile(filename, (readErr, buff) => {
-      if (readErr) { done(readErr); return }
-      loader.load(buff, (loadErr, si) => {
+    downloadIndex(filename, (downloadErr, data) => {
+      if (downloadErr) {
+        done(downloadErr)
+        return
+      }
+
+      loader.load(data, (loadErr, si) => {
         if (loadErr) {
           done(loadErr)
           return
@@ -109,13 +93,15 @@ describe('loadSearchIndex', () => {
   })
 
   it('should search by tags', (done) => {
-    const loader = new SearchIndexLoader(require('search-index'), {
-        indexes: levelDb,
-      })
+    const loader = new SearchIndexLoader()
 
-    fs.readFile(filename, (readErr, buff) => {
-      if (readErr) { done(readErr); return }
-      loader.load(buff, (loadErr, si) => {
+    downloadIndex(filename, (downloadErr, data) => {
+      if (downloadErr) {
+        done(downloadErr)
+        return
+      }
+
+      loader.load(data, (loadErr, si) => {
         if (loadErr) {
           done(loadErr)
           return
@@ -143,28 +129,53 @@ describe('loadSearchIndex', () => {
   })
 
   it('should search by search string', (done) => {
-    const loader = new SearchIndexLoader(require('search-index'), {
-        indexes: levelDb,
-      })
+    const loader = new SearchIndexLoader()
 
-    loader.load(fs.readFileSync(filename), (err, si) => {
-      if (err) {
-        done(err)
+    downloadIndex(filename, (downloadErr, data) => {
+      if (downloadErr) {
+        done(downloadErr)
+        return
       }
-      currentsi = si
-      expect(err).to.be.null
-      expect(si).to.not.be.null
 
-      const docs = []
-      si.search('die zauberflöte').on('data', (doc) => {
-        docs.push(doc)
-      }).on('end', () => {
-        expect(docs).to.have.length(1)
-        expect(docs[0].id).to.equal('post/2015/01_euro-trip.md')
+      loader.load(data, (err, si) => {
+        if (err) {
+          done(err)
+        }
+        currentsi = si
+        expect(err).to.be.null
+        expect(si).to.not.be.null
 
-        si.close(done)
+        const docs = []
+        si.search('die zauberflöte').on('data', (doc) => {
+          docs.push(doc)
+        }).on('end', () => {
+          expect(docs).to.have.length(1)
+          expect(docs[0].id).to.equal('post/2015/01_euro-trip.md')
+
+          si.close(done)
+        })
       })
     })
   })
 
 })
+
+function downloadIndex(url: string, cb: (err, index?: Uint8Array) => void) {
+  const oReq = new XMLHttpRequest()
+
+  oReq.onload = (oEvent) => {
+    const arrayBuffer = oReq.response // Note: not oReq.responseText
+    if (arrayBuffer) {
+      const byteArray = new Uint8Array(arrayBuffer)
+      cb(null, byteArray)
+    }
+  }
+
+  oReq.onerror = (oError) => {
+    cb(oError)
+  }
+
+  oReq.responseType = 'arraybuffer'
+  oReq.open('GET', url, true)
+  oReq.send()
+}

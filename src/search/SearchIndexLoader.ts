@@ -1,5 +1,6 @@
 import * as pako from 'pako'
 import {Readable} from 'stream'
+import {Index, Options, SearchIndexLib} from 'search-index'
 
 /**
  * Converts an array buffer to a string
@@ -36,17 +37,19 @@ function inflate(contents: Uint8Array, cb: (err: Error, inflated?: string) => vo
     }
 }
 
+declare var SearchIndex: SearchIndexLib
+
 export class SearchIndexLoader {
 
   private lib
   private options
 
-  constructor(lib?: SearchIndexLib, options?: search_index.Options) {
+  constructor(lib?: SearchIndexLib, options?: Options) {
     this.lib = lib || SearchIndex
     this.options = options || {}
   }
 
-  public load(contents: Uint8Array, cb: (err: Error, index?: search_index.Index) => void) {
+  public load(contents: Uint8Array, cb: (err: Error, index?: Index) => void) {
 
     inflate(contents, (inflateErr, inflated) => {
       if (inflateErr) {
