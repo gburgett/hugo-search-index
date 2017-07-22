@@ -117,4 +117,41 @@ describe('script bundle', () => {
     // act
     doSearch('skopje')
   })
+
+  it('should show when no search results', (done) => {
+    const results = (evt) => {
+      const rows = document.querySelectorAll('#searchResults tr')
+
+      expect(rows).to.have.length(1)
+      expect(rows[0].innerHTML.toLowerCase()).to.contain('no results')
+      done()
+    }
+    const err = (evt) => {
+      done(evt.detail)
+    }
+
+    done = wireEvents(done, results, err)
+
+    // act
+    doSearch('asdflkqjwer')
+  })
+
+  it('should do nothing when string empty', (done) => {
+    const results = (evt) => {
+      expect.fail('should not have fired the results event')
+      done()
+    }
+    const err = (evt) => {
+      done(evt.detail)
+    }
+
+    done = wireEvents(done, results, err)
+
+    // act
+    doSearch('')
+
+    setTimeout(() => {
+      done()
+    }, 1000)
+  })
 })

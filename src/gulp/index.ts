@@ -234,21 +234,15 @@ function exportIndex(index, file: string, c: Console, done: (err?) => void) {
 module.exports = (gulp, c?: Console) => {
   const exportFile = './public/search_index.gz'
 
-  gulp.task('test-hugoize', () => {
-    const log = (c || console).log
-    return gulp.src('./content/**/*.md')
-        .pipe(buildDocument())
-        .pipe(new Transform({
-          objectMode: true,
+  gulp.task('search', ['copy-search-javascript', 'build-search-index'])
 
-          transform(obj: any, encoding, callback) {
-            log((obj as IHugoDoc).id)
-            callback(undefined, obj)
-          },
-        }))
-  })
+  gulp.task('copy-search-javascript', () =>
+    gulp.src(['node_modules/search-index/dist/search-index.min.js', 'node_modules/hugo-search-index/dist/search.min.js'])
+      .pipe(gulp.dest('./public/js')),
+  )
 
   gulp.task('build-search-index', (done) => {
+      // load up our search-index so we can populate and export it
     const searchIndex = require('search-index')
     searchIndex(searchIndexOptions, (openDatabaseError, index) => {
       if (openDatabaseError) {
@@ -256,12 +250,14 @@ module.exports = (gulp, c?: Console) => {
         return
       }
 
+        // ensure the ./public directory exists
       fs.mkdir('./public', (mdErr) => {
         if (mdErr && mdErr.code !== 'EEXIST') {
           done(mdErr)
           return
         }
 
+          // import all the markdown files into our search index
         gulp.src('./content/**/*.md')
         .pipe(buildDocument())
         .pipe(index.defaultPipeline())
@@ -272,6 +268,7 @@ module.exports = (gulp, c?: Console) => {
             return
           }
 
+            // ensure we have some markdown files and there wasn't some kind of error
           index.countDocs((countErr, count) => {
             if (countErr) {
               done(countErr)
@@ -282,10 +279,12 @@ module.exports = (gulp, c?: Console) => {
               return
             }
 
+              // export the entire search index to a gzip file in the public directory
             if (c) { c.log(chalk.gray(`loaded ${count} documents in search index.  Exporting to ${exportFile}`)) }
             exportIndex(index, exportFile, c, (exportErr) => {
               if (exportErr) { done(exportErr); return }
 
+                // close the search index
               if (c) { c.log(chalk.gray('closing temporary search index...')) }
               index.close((closeErr) => {
                 if (closeErr) {
@@ -293,6 +292,7 @@ module.exports = (gulp, c?: Console) => {
                   return
                 }
 
+                  // remove the files that the search index created
                 if (c) { c.log(chalk.gray('removing temporary search index files...')) }
                 fs.remove('si', (rmErr) => {
                   done(rmErr)

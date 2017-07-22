@@ -55,6 +55,10 @@ interface IWindow extends Window {
   // Hook up listeners to <form id="searchForm"> if it exists
   const searchForm = document.getElementById('searchForm')
   const output = document.getElementById('searchResults')
+  const spinner = document.getElementById('searchSpinner')
+  if (spinner) {
+    spinner.style.visibility = 'hidden'   // hidden while not searching
+  }
   if (searchForm && searchForm instanceof HTMLFormElement) {
     searchForm.onsubmit = (evt) => {
       evt.preventDefault()
@@ -65,6 +69,16 @@ interface IWindow extends Window {
       }
 
       const text = input.value
+      if (!text || text === '') {
+          // do nothing for empty string search
+        return
+      }
+
+      if (spinner) {
+          // turn on the spinner while we search
+        spinner.style.visibility = 'visible'
+      }
+
       if (w.Search) {
           // already loaded
         doSearch(text)
@@ -88,6 +102,10 @@ interface IWindow extends Window {
           writeSearchResults(output, results)
         }
         fireEvent('searchIndexResults', results)
+        if (spinner) {
+          // now we stop the spinner
+          spinner.style.visibility = 'hidden'
+        }
       })
   }
 
@@ -164,9 +182,15 @@ interface IWindow extends Window {
       resultToRow(results[i], body.insertRow())
     }
 
-    for (; i < body.rows.length; i++) {
       // delete old rows
+    for (; i < body.rows.length; ) {
+        // since this is a live list, as we delete items it shrinks.  Thus we don't increment i.
       body.deleteRow(i)
+    }
+
+    if (results.length === 0) {
+      const row = body.insertRow()
+      row.innerHTML = '<h3>No Results</h3>'
     }
   }
 })(window as any, document)
