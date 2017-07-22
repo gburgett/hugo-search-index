@@ -39,6 +39,5 @@ export function InitSearch(indexUrl: string, cb: (err, store?: SearchStore) => v
 }
 
 export default InitSearch
-export { SearchStore } from './store'
+export { SearchStore, SearchResult } from './store'
 export { SearchIndexLoader } from './SearchIndexLoader'
-export { SearchResult } from 'search-index'

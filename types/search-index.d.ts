@@ -215,9 +215,14 @@ export declare class IndexingOptions {
 }
 
 export declare class SearchResult {
-    id: any
+    /** The 'id' field of the document */
+    id: string
+    /** The "relevance score" of the document to the search.  Use this to order results by relevance. */
     score: number
+    /** The criteria by which the document was scored. */
     scoringCriteria: any
+
+    /** The document given to search-index to be indexed */
     document: any
 }
 
