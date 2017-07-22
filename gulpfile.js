@@ -2,6 +2,8 @@ const gulp = require('gulp')
 const gutil = require('gulp-util')
 const ts = require('gulp-typescript')
 const rename = require('gulp-rename')
+const uglify = require('gulp-uglify')
+const debug = require('gulp-debug')
 const del = require('del')
 const webpack = require('webpack')
 
@@ -18,9 +20,11 @@ gulp.task('build-gulp', () => {
       .pipe(gulp.dest('gulp'))
 })
 
+gulp.task('build-dist', ['dist-webpack', 'dist-minify'])
+
 const webpackConfig = require("./webpack.config")
 
-gulp.task('build-dist', (done) => {
+gulp.task('dist-webpack', (done) => {
   webpack(webpackConfig, (err, stats) => {
     if(err){
       gutil.log("[webpack] " + err)
@@ -40,6 +44,15 @@ gulp.task('build-dist', (done) => {
     done()
   })
 })
+
+gulp.task('dist-minify', ['dist-webpack'], () => 
+  gulp.src(['dist/**/*.js', '!dist/**/*.min.js'])
+    .pipe(rename({
+      extname: '.min.js'
+    }))
+    .pipe(uglify())
+    .pipe(gulp.dest('dist'))
+)
 
 gulp.task('watch', ['build'], () => 
   gulp.watch(['src/**/*.ts', '!src/**/*.d.ts', '!src/**/*.test.ts'], ['build'])
