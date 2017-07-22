@@ -1,3 +1,4 @@
 .travis.yml
 si
 src/**/*.test.ts
+examples

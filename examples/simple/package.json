@@ -1,0 +1,7 @@
+{
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "http-server": "^0.10.0",
+    "hugo-search-index": "^0.1.1"
+  }
+}
