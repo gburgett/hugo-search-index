@@ -13,3 +13,13 @@ script:
 
 cache: yarn
 
+deploy:
+  provider: npm
+  email: gordon@gordonburgett.net
+  api_key:
+    secure: "a70LNLYBYIskAB2NUsEC0SB0WEGk9fKhXohrKyKHyOkHaVaffnNO8tcuX7A7YgVwvv5I1lK14xAUEmsg8W7q9JNciDViecOfzrq6XURG9lhC8dZLnfOBtRutr3qqajb54AwXN3S9ndchdCwSfzorALmzV77P4MGl09dwFUiPIPi/T20GTR1l3wovJ20Vk4Tb0U5UuZxs/tkRpj0e+9WIMaN3LjwCNlOlbH8hIvlE5b/Lt6YKjvJuMPMJU8adVFF36hxWk5C9KHW0Yd18b/hX0FLINJpxm8BVtByrkYqNzxf2J7wDWEyCy/6GbV9osCLkt8vSHeGuBHJ7HJPgcVfjA235gg1XectAHSemj63CyjNvKLl3cJIsui6kPNmiRKDNSPGijvSo/ijRq8+bPRv9bmecNeAcXQHf9NBVTwWyc3Lh0pVPFR344HO0JdIG7rldyreYfswoWucNKYDF3Gpw749KzqYEYJsU1mjGQXY/F0wLrCEW+NGK4G7XR/tSdEK2IVAClGtjHSj51nw562tluHrkJmVHF1XbJPyR2LUDtG/YCA+YT3VkRB5zX1u4bAwsMG2z6jJeE9NO7zody3UiTGasT3LzGnHYbbJZ7xZfHKQhpIvVnci24joTmR6bF2YpIv4ESaMeg5ZnnMIgjDpPQsaViJo5Edoc27Nhdf8sAL8="
+  on:
+    tags: true
+    repo: gburgett/hugo-search-index
+    branch: master
+  skip_cleanup: true
