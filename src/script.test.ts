@@ -1,7 +1,7 @@
 // tslint:disable:no-console no-unused-expression
 
 import * as chai from 'chai'
-import { SearchStore } from './search'
+import { SearchResult, SearchStore } from './search'
 const expect = chai.expect
 
 describe('script bundle', () => {
@@ -43,7 +43,7 @@ describe('script bundle', () => {
     div = null
     script = null
     store = null
-    console.log('cleared test')
+    console.log('cleared test dom')
   })
 
   it('should load and ready the store for search', () => {
@@ -95,5 +95,26 @@ describe('script bundle', () => {
 
     // act
     doSearch('become')
+  })
+
+  it('should include search results in the event', (done) => {
+    const results = (evt) => {
+      const rows: SearchResult[] = evt.detail
+
+      expect(rows).to.have.length(1)
+      expect(rows[0].id).to.equal('post/2015/01_euro-trip.md')
+      expect(rows[0].document.relativeurl).to.equal('/post/2015/01_euro-trip')
+      expect(rows[0].document.date).to.equal('2015-01-05T10:20:47-06:00')
+      expect(rows[0].document.title).to.equal('Euro Trip!')
+      done()
+    }
+    const err = (evt) => {
+      done(evt.detail)
+    }
+
+    done = wireEvents(done, results, err)
+
+    // act
+    doSearch('skopje')
   })
 })

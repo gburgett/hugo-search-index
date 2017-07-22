@@ -2,16 +2,18 @@
 
 import { InitSearch, SearchResult, SearchStore } from './search'
 
-// tslint:disable-next-line:interface-over-type-literal
-declare type Window = {
+interface IWindow extends Window {
   CustomEvent?: Event,
   Search: SearchStore,
   language: string,
 }
 
-((w: Window, d: Document) => {
+((w: IWindow, d: Document) => {
+  /** The script (or the document) */
   let me: Element | Document
+  /** The URL where the search_index.gz is located */
   let url: string
+  /** The current language of the site */
   let lang: string
 
     // try using document.currentScript on modern browsers
@@ -39,6 +41,57 @@ declare type Window = {
     url = '/search_index.gz'
   }
 
+    // Initialize the search index in the page context
+  InitSearch(url, (err, store) => {
+    if (err) {
+      fireError('Error loading search index: ' + err)
+      return
+    }
+      // Search index initialized, add it to the window and fire the event.
+    w.Search = store
+    fireEvent('searchIndexLoaded', { search: store })
+  })
+
+  // Hook up listeners to <form id="searchForm"> if it exists
+  const searchForm = document.getElementById('searchForm')
+  const output = document.getElementById('searchResults')
+  if (searchForm && searchForm instanceof HTMLFormElement) {
+    searchForm.onsubmit = (evt) => {
+      evt.preventDefault()
+      const input = getSearchInput(searchForm)
+      if (!input) {
+        fireError('Unable to find <input type="search"> inside <form id="searchForm">')
+        return
+      }
+
+      const text = input.value
+      if (w.Search) {
+          // already loaded
+        doSearch(text)
+      } else {
+          // wait for loading to complete then do the search
+        me.addEventListener('searchIndexLoaded', () => {
+          doSearch(text)
+        })
+      }
+    }
+  }
+
+  function doSearch(text: string): void {
+    w.Search.runSearch(text, lang, (error, results) => {
+        if (error) {
+          fireError(error)
+          return
+        }
+
+        if (output && output instanceof HTMLTableElement) {
+          writeSearchResults(output, results)
+        }
+        fireEvent('searchIndexResults', results)
+      })
+  }
+
+  /** Fires a CustomEvent with the given name and detail */
   function fireEvent(name: string, detail: any): void {
     let event
     if (w.CustomEvent) {
@@ -51,13 +104,15 @@ declare type Window = {
     me.dispatchEvent(event)
   }
 
+  /** Fires a CustomEvent with name searchIndexError and also logs to the console */
   function fireError(error: string | Error): void {
     console.error('[SearchIndex] ' + error)
     fireEvent('searchIndexError', error)
   }
 
-  function getSearchInput(searchForm: HTMLFormElement): HTMLInputElement {
-    const inputs = searchForm.getElementsByTagName('input')
+  /** Gets the HTMLInputElement where the search text goes on the form */
+  function getSearchInput(form: HTMLFormElement): HTMLInputElement {
+    const inputs = form.getElementsByTagName('input')
     for (let i = 0; i < inputs.length; ++i) {
       if (inputs[i].type === 'search') {
         return inputs[i]
@@ -73,6 +128,7 @@ declare type Window = {
     return inputs.length > 0 ? inputs[0] : undefined
   }
 
+  /** Formats and writes search results to the given HTMLTableElement in the <tbody> */
   function writeSearchResults(table: HTMLTableElement, results: SearchResult[]): void {
     let body: HTMLTableSectionElement
     if (table.tBodies && table.tBodies.length > 0) {
@@ -98,7 +154,7 @@ declare type Window = {
     }
 
     let i = 0
-    for (; i < body.rows.length; i++) {
+    for (; i < body.rows.length && i < results.length; i++) {
       // overwrite existing rows
       resultToRow(results[i], body.rows[i])
     }
@@ -113,41 +169,4 @@ declare type Window = {
       body.deleteRow(i)
     }
   }
-
-  console.log('initializing search with index ', url, 'lang', lang)
-  InitSearch(url, (err, store) => {
-    if (err) {
-      fireError('Error loading search index: ' + err)
-      return
-    }
-    w.Search = store
-    fireEvent('searchIndexLoaded', { search: store })
-
-    const searchForm = document.getElementById('searchForm')
-    const output = document.getElementById('searchResults')
-    if (searchForm && searchForm instanceof HTMLFormElement) {
-      searchForm.onsubmit = (evt) => {
-        evt.preventDefault()
-        const input = getSearchInput(searchForm)
-        if (!input) {
-          fireError('Unable to find <input type="search"> inside <form id="searchForm">')
-          return
-        }
-
-        const text = input.value
-        w.Search.runSearch(text, lang, (error, results) => {
-          if (error) {
-            fireError(error)
-            return
-          }
-
-          if (output && output instanceof HTMLTableElement) {
-            writeSearchResults(output, results)
-          }
-          fireEvent('searchIndexResults', { results: results })
-        })
-      }
-    }
-  })
-
 })(window as any, document)

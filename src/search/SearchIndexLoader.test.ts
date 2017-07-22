@@ -19,7 +19,6 @@ describe('loadSearchIndex', () => {
           console.log(err)
         }
         currentsi = undefined
-        console.log('levelup instance closed')
         done(err)
       })
     }
@@ -37,13 +36,11 @@ describe('loadSearchIndex', () => {
         return
       }
 
-      console.log('LOADING....')
       loader.load(data, (loadErr, si) => {
         if (loadErr) {
           done(loadErr)
           return
         }
-        console.log('LOADED!')
         currentsi = si
 
         expect(si).to.not.be.null
@@ -87,7 +84,6 @@ describe('loadSearchIndex', () => {
           numDocs++
 
           expect(doc).to.not.be.null
-          console.log('doc:', JSON.stringify(doc))
           expect(doc.date).to.equal('2014-12-14T13:49:30-06:00')
           expect(doc.title).to.equal('about')
         }).on('end', () => {
