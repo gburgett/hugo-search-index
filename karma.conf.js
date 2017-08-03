@@ -9,12 +9,17 @@ module.exports = (config) => {
 
   config.set({
     frameworks: ['mocha'],
+    reporters: ['mocha'],
     browsers: ['Firefox'],
     files: [
+        // search-index needs to be loaded in the browser
       'node_modules/search-index/dist/search-index.js',
+        // all our source files should be included as modules by webpack
       'src/search/**/*[!d].ts',
+        // "script.ts" will be injected by the script.test.ts test file in the test setup
       { pattern: 'src/script.ts', included: false, served: true },
       'src/script.test.ts',
+        // the gzipped search index needs to be available.
       { pattern: 'src/search/*.gz', watched: false, included: false, served: true, nocache: false }
     ],
 

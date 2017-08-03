@@ -91,6 +91,24 @@ describe('SearchStore', () => {
     })
   })
 
+  it('should trim whitespace from query', (done) => {
+
+    const store = new SearchStore(index)
+
+    //  act
+    store.runSearch('FTP ', (err, results) => {
+
+      if (err) { done(err); return }
+
+      //  assert
+      results = results.slice()
+      expect(results).to.have.length(1, 'length')
+      expect(results[0].id).to.equal('post/2017/04_modern_static_sites.md')
+
+      done()
+    })
+  })
+
   it.skip('should return results only matching given language', (done) => {
 
     const store = new SearchStore(index)

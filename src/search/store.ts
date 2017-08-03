@@ -64,7 +64,9 @@ export class SearchStore {
     this.currentQuery = query
     const results: SearchResult[] = []
 
-    // search index only handles lower case - no matches on uppercase
+      // remove whitespace
+    query = query.trim()
+      // search index only handles lower case - no matches on uppercase
     query = query.toLocaleLowerCase()
 
     const queryObj = {

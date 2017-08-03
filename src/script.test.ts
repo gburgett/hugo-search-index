@@ -154,4 +154,40 @@ describe('script bundle', () => {
       done()
     }, 1000)
   })
+
+  it('should trim search string before search', (done) => {
+    const results = (evt) => {
+      const rows: SearchResult[] = evt.detail
+
+      expect(rows).to.have.length(1)
+      expect(rows[0].id).to.equal('post/2015/01_euro-trip.md')
+      done()
+    }
+    const err = (evt) => {
+      done(evt.detail)
+    }
+
+    done = wireEvents(done, results, err)
+
+    // act
+    doSearch(' skopje ')
+  })
+
+  it('should handle uppercase search string', (done) => {
+    const results = (evt) => {
+      const rows: SearchResult[] = evt.detail
+
+      expect(rows).to.have.length(1)
+      expect(rows[0].id).to.equal('post/2015/01_euro-trip.md')
+      done()
+    }
+    const err = (evt) => {
+      done(evt.detail)
+    }
+
+    done = wireEvents(done, results, err)
+
+    // act
+    doSearch('SKOpJe')
+  })
 })
