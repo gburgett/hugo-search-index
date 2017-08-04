@@ -209,7 +209,7 @@ function exportIndex(index, file: string, c: Console, done: (err?) => void) {
           return
         }
         if (filestats.size < 50) {
-          done(`Error writing out the search index!  The resulting filesize is ${filestats.size} bytes!`)
+          done(`Error writing out the search index!  The resulting filesize is less than ${filestats.size} bytes, it ought to be bigger!`)
           return
         }
 
@@ -233,14 +233,14 @@ function exportIndex(index, file: string, c: Console, done: (err?) => void) {
 module.exports = (gulp, c?: Console) => {
   const exportFile = './public/search_index.gz'
 
-  gulp.task('search', ['copy-search-javascript', 'build-search-index'])
+  gulp.task('hugo-search-index', ['hugo-search-index/copy-javascript', 'hugo-search-index/build-search-index'])
 
-  gulp.task('copy-search-javascript', () =>
+  gulp.task('hugo-search-index/copy-javascript', () =>
     gulp.src(['node_modules/search-index/dist/search-index.min.js', 'node_modules/hugo-search-index/dist/search.min.js'])
       .pipe(gulp.dest('./public/js')),
   )
 
-  gulp.task('build-search-index', (done) => {
+  gulp.task('hugo-search-index/build-search-index', (done) => {
       // load up our search-index so we can populate and export it
     const searchIndex = require('search-index')
     searchIndex(searchIndexOptions, (openDatabaseError, index) => {
@@ -281,7 +281,10 @@ module.exports = (gulp, c?: Console) => {
               // export the entire search index to a gzip file in the public directory
             if (c) { c.log(chalk.gray(`loaded ${count} documents in search index.  Exporting to ${exportFile}`)) }
             exportIndex(index, exportFile, c, (exportErr) => {
-              if (exportErr) { done(exportErr); return }
+              if (exportErr) {
+                done(exportErr)
+                return
+              }
 
                 // close the search index
               if (c) { c.log(chalk.gray('closing temporary search index...')) }

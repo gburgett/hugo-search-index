@@ -49,9 +49,9 @@ gulp.task("default", ["build"]);
 
 /** 
  * "build" relies on "search".
- * "search" is imported from 'hugo-search-index/gulp' above.
+ * "hugo-search-index" is imported from 'hugo-search-index/gulp' above.
  */
-gulp.task("build", ["search"]);
+gulp.task("build", ["hugo-search-index"]);
 ```
 Now if you type `gulp build` it will create a gzipped file in the `public/` directory called `search_index.gz`.  This file contains the index of all your markdown files
 in the `content/` directory.

@@ -27,10 +27,10 @@ const gulp = require('gulp')
 // import search index tasks
 require('hugo-search-index/gulp')(gulp)
 
-gulp.task('build', ['search'])
+gulp.task('build', ['hugo-search-index'])
 ```
 
-`build-search-index` will scan your `content` directory for all markdown files, and create a search index around them.  It will then gzip this search index and place the resulting file in the `public` directory, which is where the rest of your hugo site goes when it's built.
+`hugo-search-index` will scan your `content` directory for all markdown files, and create a search index around them.  It will then gzip this search index and place the resulting file in the `public` directory, which is where the rest of your hugo site goes when it's built.
 
 Now build the search index with gulp:
 ```
@@ -134,17 +134,17 @@ The object passed to the detail of the `searchIndexResults` event is an array of
 
 ```ts
 export declare class SearchResult {
-    id: any
-    score: number
-    scoringCriteria: any
-    document: {
-      id: string,           // relative path of the markdown file ex. `post/first_post.md`
-      lang: string,         // language of the markdown file for multilang sites ('en' if not specified)
-      relativeurl: string,  // http url of the rendered file in the site, not including hostname i.e. `/post/first_post.md` 
-      body: string,         // rendered markdown content stripped of HTML tags
+  id: any
+  score: number
+  scoringCriteria: any
+  document: {
+    id: string,           // relative path of the markdown file ex. `post/first_post.md`
+    lang: string,         // language of the markdown file for multilang sites ('en' if not specified)
+    relativeurl: string,  // http url of the rendered file in the site, not including hostname i.e. `/post/first_post.md` 
+    body: string,         // rendered markdown content stripped of HTML tags
 
-      [key: string]: string // a dictionary of front matter data, the YAML TOML or JSON at the top of the markdown file.  Every key is lowercased.
-    }
+    [key: string]: string // a dictionary of front matter data, the YAML TOML or JSON at the top of the markdown file.  Every key is lowercased.
+  }
 }
 ```
 
@@ -175,6 +175,6 @@ export class SearchStore {
 }
 ```
 
-You can call `window.Store.runSearch('my query', myResultsProcessor)` to run your own behind-the-scenes search that won't show up in the 
+You can call `window.Store.runSearch('my query', myCallback)` to run your own behind-the-scenes search that won't show up in the 
 `searchResults` table. If you don't create a form for the script to attach to, you should use this to run your own searches and render
 your own results.
