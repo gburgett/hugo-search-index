@@ -1,10 +1,10 @@
 // tslint:disable:no-console no-unused-expression
 
 import * as chai from 'chai'
-import { SearchResult, SearchStore } from './search'
+import { SearchResult, SearchStore } from './lib/search'
 const expect = chai.expect
 
-describe('script bundle', () => {
+describe('search.js bundle', () => {
 
   let div: HTMLElement
   let script: HTMLScriptElement

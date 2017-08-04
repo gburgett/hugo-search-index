@@ -6,18 +6,32 @@ const uglify = require('gulp-uglify')
 const debug = require('gulp-debug')
 const del = require('del')
 const webpack = require('webpack')
+const path = require('path')
 
-const tsproj = ts.createProject('tsconfig.json')
+const gulpProj = ts.createProject('tsconfig.json', {
+  declaration: true,
+  target: "es2015"     // can assume gulp tasks are run on a somewhat modern nodejs install
+})
 
-gulp.task('build', ['build-gulp', 'build-dist'])
+const libProj = ts.createProject('tsconfig.json', {
+  declaration: true,
+  target: "es3"        // can't guarantee the library files get loaded by a babel loader
+})
+
+gulp.task('build', ['build-gulp', 'build-lib', 'build-dist'])
 
 gulp.task('build-gulp', () => {
-  return gulp.src(['src/gulp/**/*.ts', '!src/**/*.d.ts', '!src/**/*.test.ts'])
-      .pipe(tsproj())
-      .pipe(rename({
-        extname: ".js"
-      }))
+  return gulp.src(['src/gulp/**/*.ts', '!src/**/*.test.ts'])  // all ts files in the gulp folder excluding test
+      .pipe(gulpProj())
       .pipe(gulp.dest('gulp'))
+})
+
+gulp.task('build-lib', () => {
+  return gulp.src(['src/lib/**/*.ts', '!src/**/*.test.ts'])  // all ts files in the lib folder excluding test
+        .pipe(debug())
+        .pipe(libProj())
+        .pipe(gulp.dest('lib'))
+
 })
 
 gulp.task('build-dist', ['dist-webpack', 'dist-minify'])
@@ -58,4 +72,14 @@ gulp.task('watch', ['build'], () =>
   gulp.watch(['src/**/*.ts', '!src/**/*.d.ts', '!src/**/*.test.ts'], ['build'])
 )
 
-gulp.task('clean', () => del('gulp/**/*', 'dist/**/*'))
+gulp.task('clean', (done) => {
+  del(['gulp/**', 'dist/**', 'lib/**'])
+    .then((files) => {
+      gutil.log(gutil.colors.green(`removed ${files.length} files`))
+      gutil.log(gutil.colors.cyan(...files.map(f => path.relative(__dirname, f))))
+      done()
+    })
+    .catch((reason) => {
+      done(reason)
+    })
+})

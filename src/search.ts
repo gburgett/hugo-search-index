@@ -1,6 +1,6 @@
 // tslint:disable:prefer-for-of no-console
 
-import { InitSearch, SearchResult, SearchStore } from './search'
+import { InitSearch, SearchResult, SearchStore } from './lib/search'
 
 interface IWindow extends Window {
   CustomEvent?: Event,

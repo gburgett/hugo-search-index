@@ -37,7 +37,7 @@ function inflate(contents: Uint8Array, cb: (err: Error, inflated?: string) => vo
     }
 }
 
-declare var SearchIndex: SearchIndexLib
+declare const SearchIndex: SearchIndexLib
 
 export class SearchIndexLoader {
 
@@ -46,7 +46,9 @@ export class SearchIndexLoader {
 
   constructor(lib?: SearchIndexLib, options?: Options) {
     this.lib = lib || SearchIndex
-    this.options = options || {}
+    this.options = options || {
+      keySeparator: '~',
+    }
   }
 
   public load(contents: Uint8Array, cb: (err: Error, index?: Index) => void) {

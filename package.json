@@ -2,7 +2,7 @@
   "name": "hugo-search-index",
   "version": "0.1.2",
   "description": "A library for adding search capability to hugo static sites",
-  "main": "index.js",
+  "main": "lib/index.js",
   "scripts": {
     "lint": "echo \"\\033[1;32mdouble-checking source files...\\033[0m\" && tslint 'src/**/*.ts?(x)' -e '**/*.d.ts'",
     "test-mocha": "mocha -t 5000 --compilers ts:ts-node/register --recursive 'src/gulp/**/*.test.ts?(x)'",
@@ -23,7 +23,6 @@
     "@types/fs-extra": "^3.0.3",
     "@types/mocha": "^2.2.41",
     "@types/node": "^8.0.13",
-    "@types/sinon": "^2.3.2",
     "@types/vinyl": "^2.0.0",
     "awesome-typescript-loader": "^3.2.1",
     "babel-core": "^6.25.0",

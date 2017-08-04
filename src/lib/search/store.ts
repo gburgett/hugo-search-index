@@ -1,7 +1,7 @@
 
 import {Index, SearchResult as InternalSearchResult } from 'search-index'
 
-type SearchCallback = (error: Error, results?: SearchResult[]) => void
+export type SearchCallback = (error: Error, results?: SearchResult[]) => void
 
 // disable 'interface-name' because we want to override the "SearchResult" definition from 'search-index' to extend the document definition.
 // tslint:disable-next-line:interface-name
