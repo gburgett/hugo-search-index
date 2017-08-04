@@ -2,7 +2,8 @@
   "name": "hugo-search-index",
   "version": "0.1.2",
   "description": "A library for adding search capability to hugo static sites",
-  "main": "lib/index.js",
+  "main": "./lib/index.js",
+  "types": "./lib/index.d.ts",
   "scripts": {
     "lint": "echo \"\\033[1;32mdouble-checking source files...\\033[0m\" && tslint 'src/**/*.ts?(x)' -e '**/*.d.ts'",
     "test-mocha": "mocha -t 5000 --compilers ts:ts-node/register --recursive 'src/gulp/**/*.test.ts?(x)'",

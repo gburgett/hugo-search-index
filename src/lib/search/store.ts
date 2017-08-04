@@ -6,6 +6,13 @@ export type SearchCallback = (error: Error, results?: SearchResult[]) => void
 // disable 'interface-name' because we want to override the "SearchResult" definition from 'search-index' to extend the document definition.
 // tslint:disable-next-line:interface-name
 export interface SearchResult extends InternalSearchResult {
+    /** The 'id' field of the document */
+    id: string
+    /** The "relevance score" of the document to the search.  Use this to order results by relevance. */
+    score: number
+    /** The criteria by which the document was scored. */
+    scoringCriteria: any
+
     /** The document itself - prepared by the gulp task from the markdown data */
     document: {
       /** relative path of the markdown file ex. `post/first_post.md`  */
@@ -20,7 +27,7 @@ export interface SearchResult extends InternalSearchResult {
       /** a dictionary of front matter data, the YAML TOML or JSON at the top of the markdown file.
        * Every key is lowercased even if it was upper case in the front matter.
        */
-      [key: string]: string,
+      [key: string]: any,
     }
 }
 
