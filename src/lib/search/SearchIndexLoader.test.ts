@@ -6,7 +6,7 @@ const expect = chai.expect
 
 import SearchIndexLoader from './SearchIndexLoader'
 
-const filename = '/base/src/search/test_search_index.gz'
+const filename = '/base/src/lib/search/test_search_index.gz'
 
 describe('loadSearchIndex', () => {
 

@@ -1,7 +1,7 @@
 {
     "compilerOptions": {
         "sourceMap": true,
-        "target": "es2015",             // webpack will pass this through babel, gulp tasks will override it
+        "target": "es2015",
         "module": "commonjs",
         "experimentalDecorators": true,
         "noImplicitUseStrict": true,
