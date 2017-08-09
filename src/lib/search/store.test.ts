@@ -91,6 +91,32 @@ describe('SearchStore', () => {
     })
   })
 
+  it('should emit events on successful query', (done) => {
+
+    const store = new SearchStore(index)
+
+    const data = []
+
+    store.on('data', (d) => {
+      data.push(d)
+    })
+
+    store.on('end', (results) => {
+      expect(data).to.have.length(6, 'length')
+      expect(data[0].id).to.equal('post/2015/10_running_with_docker.md')
+      expect(data[5].id).to.equal('post/2016/09_taking_control_of_my_data.md')
+
+      expect(results.slice()).to.deep.equal(data, 'data === results')
+
+      done()
+    })
+
+    //  act
+    store.runSearch('docker', (err) => {
+      if (err) { done(err); return }
+    })
+  })
+
   it('should trim whitespace from query', (done) => {
 
     const store = new SearchStore(index)

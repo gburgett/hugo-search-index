@@ -1,4 +1,5 @@
 
+import { EventEmitter } from 'events'
 import {Index, SearchResult as InternalSearchResult } from 'search-index'
 
 export type SearchCallback = (error: Error, results?: SearchResult[]) => void
@@ -31,7 +32,7 @@ export interface SearchResult extends InternalSearchResult {
     }
 }
 
-export class SearchStore {
+export class SearchStore extends EventEmitter {
 
   /** The search string which was most recently executed by runSearch */
   public currentQuery: string
@@ -51,6 +52,7 @@ export class SearchStore {
   private index: Index
 
   constructor(index: Index) {
+    super()
     this.index = index
     this.queryHistory = []
     this.results = []
@@ -88,15 +90,18 @@ export class SearchStore {
     this.index.search({ query: queryObj })
       .on('data', (doc) => {
         results.push(doc)
+        this.emit('data', doc)
       })
       .on('end', () => {
         this.inProgress = false
         this.results = results.slice()
+        this.emit('end', results)
         cb(undefined, results)
       })
       .on('error', (error) => {
         this.results = undefined
         this.lastError = error
+        this.emit('error', error)
         cb(error)
       })
   }
