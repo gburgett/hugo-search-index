@@ -87,6 +87,8 @@ export class SearchStore extends EventEmitter {
       (queryObj.AND as any).lang = [ lang ]
     }
 
+    this.emit('start', query, queryObj)
+
     this.index.search({ query: queryObj })
       .on('data', (doc) => {
         results.push(doc)

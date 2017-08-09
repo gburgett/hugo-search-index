@@ -95,8 +95,15 @@ describe('SearchStore', () => {
 
     const store = new SearchStore(index)
 
-    const data = []
+    let query
+    let queryObj
+    store.on('start', (q, qObj) => {
+      expect(data).to.be.empty
+      query = q
+      queryObj = qObj
+    })
 
+    const data = []
     store.on('data', (d) => {
       data.push(d)
     })
@@ -107,6 +114,15 @@ describe('SearchStore', () => {
       expect(data[5].id).to.equal('post/2016/09_taking_control_of_my_data.md')
 
       expect(results.slice()).to.deep.equal(data, 'data === results')
+
+      expect(query).to.equal('docker')
+      console.log(queryObj)
+      expect(queryObj).to.deep.equal({
+        AND: {
+          '*': ['docker'],
+        },
+        BOOST: 0,
+      })
 
       done()
     })
@@ -166,6 +182,11 @@ describe('SearchStore', () => {
 
     const store = new SearchStore(index)
 
+    let query
+    store.on('start', (q) => {
+      query = q
+    })
+
     //  act
     store.runSearch('4 ligjet', 'sq', (err, results) => {
       if (err) { done(err); return }
@@ -182,6 +203,13 @@ describe('SearchStore', () => {
         expect(doc.lang).to.equal('sq')
         expect(doc.body).to.contain('Ky projekt tregon të katër ligjet')
       }
+
+      expect(query).to.deep.equal({
+        AND: {
+          'lang': 'sq',
+          '*': ['4', 'ligjet'],
+        },
+      })
 
       done()
     })
