@@ -6,7 +6,7 @@ const expect = chai.expect
 
 import SearchIndexLoader from './SearchIndexLoader'
 
-const filename = '/base/src/lib/search/test_search_index.gz'
+const filename = '/base/src/lib/search/test_search_index-hash.gz'
 
 describe('loadSearchIndex', () => {
 
@@ -32,12 +32,14 @@ describe('loadSearchIndex', () => {
 
     downloadIndex(filename, (downloadErr, data) => {
       if (downloadErr) {
+        console.error(downloadErr)
         done(downloadErr)
         return
       }
 
       loader.load(data, (loadErr, si) => {
         if (loadErr) {
+          console.error(loadErr)
           done(loadErr)
           return
         }
@@ -47,6 +49,7 @@ describe('loadSearchIndex', () => {
 
         si.countDocs((errCD, count) => {
           if (errCD) {
+            console.error(errCD)
             done(errCD)
             return
           }

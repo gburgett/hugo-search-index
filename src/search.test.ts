@@ -32,7 +32,7 @@ describe('search.js bundle', () => {
       store = evt.detail
       done()
     })
-    script.setAttribute('data-search-index', '/base/src/lib/search/test_search_index.gz')
+    script.setAttribute('data-search-index', '/base/src/lib/search/test_search_index')
     script.src = '/base/src/search.ts'
     document.body.appendChild(script)
   })

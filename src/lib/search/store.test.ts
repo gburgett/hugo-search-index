@@ -255,7 +255,7 @@ function buildIndex(cb: (err, idx?: Index) => void) {
       indexPath: 'test.store.' + Math.random(),
     })
 
-  downloadIndex('/base/src/lib/search/test_search_index.gz', (downloadErr, gzippedContents) => {
+  downloadIndex('/base/src/lib/search/test_search_index-hash.gz', (downloadErr, gzippedContents) => {
     if (downloadErr) {
       cb(downloadErr)
       return

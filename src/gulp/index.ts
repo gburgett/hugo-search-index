@@ -1,4 +1,4 @@
-
+import * as crypto from 'crypto'
 import * as path from 'path'
 import { Transform } from 'stream'
 import * as zlib from 'zlib'
@@ -197,6 +197,7 @@ const invertDocumentVector = () => new Transform({
 })
 
 function exportIndex(index, file: string, c: Console, done: (err?) => void) {
+
   index.dbReadStream({ gzip: true })
     .pipe(invertDocumentVector())
     .pipe(JSONStream.stringify(false))
@@ -214,11 +215,10 @@ function exportIndex(index, file: string, c: Console, done: (err?) => void) {
         }
 
         if (c) {
-          c.log(chalk.gray(`wrote out public/search_index.gz with file size ${(filestats.size / 1024).toFixed(1)} KB.`))
+          c.log(chalk.gray(`wrote out ${file} with file size ${(filestats.size / 1024).toFixed(1)} KB.`))
 
           if (filestats.size > 4 * 1024 * 1024) {
             c.log(chalk.red(`gzipped search index is ${(filestats.size / 1024 / 1024).toFixed(1)} MB! This is a lot to download.  Find a way to reduce the size or improve caching.`))
-            return
           } else if (filestats.size > 1 * 1024 * 1024) {
             c.log(chalk.yellow(`gzipped search index is ${(filestats.size / 1024).toFixed(1)} KB!  ` +
                 "That's starting to get big."))
@@ -228,6 +228,34 @@ function exportIndex(index, file: string, c: Console, done: (err?) => void) {
         done()
       })
     })
+}
+
+function moveZippedFile(file: string, done: (err?) => void) {
+
+  const fd = fs.createReadStream(file)
+  const sha256 = crypto.createHash('sha256')
+  sha256.setEncoding('hex')
+
+  fd.on('end', () => {
+    sha256.end()
+
+    const parsed = path.parse(file)
+    const zipFile = path.join(parsed.dir, parsed.name + '-' + sha256.read().toString() + parsed.ext)
+
+    fs.move(file, zipFile, { overwrite: true }, (moveErr) => {
+      if (moveErr) { done(moveErr); return }
+
+      fs.writeFile(path.join(parsed.dir, parsed.name), path.relative(file, zipFile), (writeErr) => {
+        done(writeErr)
+      })
+    })
+  })
+
+  fd.on('error', (err) => {
+    done(err)
+  })
+
+  fd.pipe(sha256)
 }
 
 module.exports = (gulp, c?: Console) => {
@@ -297,7 +325,15 @@ module.exports = (gulp, c?: Console) => {
                   // remove the files that the search index created
                 if (c) { c.log(chalk.gray('removing temporary search index files...')) }
                 fs.remove('si', (rmErr) => {
-                  done(rmErr)
+                  if (rmErr) {
+                    done(rmErr)
+                    return
+                  }
+
+                    // move the zipped search index and create link file
+                  moveZippedFile(exportFile, (mvErr) => {
+                    done(mvErr)
+                  })
                 })
               })
             })

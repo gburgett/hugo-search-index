@@ -38,7 +38,7 @@ interface IWindow extends Window {
   }
   if (!url || url === '') {
     // fallback to default search index location
-    url = '/search_index.gz'
+    url = '/search_index'
   }
 
     // Initialize the search index in the page context

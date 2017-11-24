@@ -20,7 +20,7 @@ module.exports = (config) => {
       { pattern: 'src/search.ts', included: false, served: true },
       'src/search.test.ts',
         // the gzipped search index needs to be available.
-      { pattern: 'src/lib/search/*.gz', watched: false, included: false, served: true, nocache: false }
+      { pattern: 'src/lib/search/test_search*', watched: false, included: false, served: true, nocache: false }
     ],
 
     client: {
