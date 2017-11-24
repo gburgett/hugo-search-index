@@ -50,18 +50,39 @@ function downloadIndex(url: string, cb: CB<Uint8Array>) {
 
 declare const SearchIndex: SearchIndexLib
 
-export function InitSearch(indexUrl: string, cb: (err, store?: SearchStore) => void) {
+export interface IInitSearchOptions {
+  cacheExpiration?: number
+}
+
+type InitSearchCallback = (err, store?: SearchStore) => void
+
+export function InitSearch(indexUrl: string, optionsOrCb: IInitSearchOptions | InitSearchCallback, cb?: InitSearchCallback) {
+  const options: IInitSearchOptions = {
+    cacheExpiration: 24 * 60 * 60 * 1000,
+  }
+  if (cb) {
+    for (const key in options) {
+      if (options.hasOwnProperty(key) && optionsOrCb[key]) {
+        options[key] = optionsOrCb[key]
+      }
+    }
+  } else {
+    cb = optionsOrCb as InitSearchCallback
+  }
 
   downloadIndexLocation(indexUrl, (err1, location) => {
     if (err1) { cb(err1); return }
 
     const prevLocation = localStorage.getItem('hugo-search-index.location')
+    const expiresAt = localStorage.getItem('hugo-search-index.expires')
     if (prevLocation && prevLocation === location) {
-      // we're good
-      SearchIndex(searchIndexOptions, (err2, index) => {
-        cb(err2, new SearchStore(index))
-      })
-      return
+      if (expiresAt && expiresAt > Date.now().toString()) {
+        // we're good
+        SearchIndex(searchIndexOptions, (err2, index) => {
+          cb(err2, new SearchStore(index))
+        })
+        return
+      }
     }
 
     // need to rebuild the index
@@ -75,6 +96,7 @@ export function InitSearch(indexUrl: string, cb: (err, store?: SearchStore) => v
         if (loadErr) { cb(loadErr); return }
 
         localStorage.setItem('hugo-search-index.location', location)
+        localStorage.setItem('hugo-search-index.expires', (Date.now() + options.cacheExpiration).toString())
 
         const store = new SearchStore(index)
         cb(null, store)

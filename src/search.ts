@@ -15,12 +15,15 @@ interface IWindow extends Window {
   let url: string
   /** The current language of the site */
   let lang: string
+  /** The amount of time that the search-index should be cached locally (default 24 hrs) */
+  let cacheTime: number
 
     // try using document.currentScript on modern browsers
   if (document.currentScript) {
     me = document.currentScript
     url = me.getAttribute('data-search-index')
     lang = me.getAttribute('data-language')
+    cacheTime = parseInt(me.getAttribute('data-cache-time'), 10)
   } else {
       // look for the first script element with the data-search-index
     const script = document.querySelector('script[data-search-index]')
@@ -28,6 +31,7 @@ interface IWindow extends Window {
       me = script
       url = me.getAttribute('data-search-index')
       lang = me.getAttribute('data-language')
+      cacheTime = parseInt(me.getAttribute('data-cache-time'), 10)
     }
   }
 
@@ -42,7 +46,7 @@ interface IWindow extends Window {
   }
 
     // Initialize the search index in the page context
-  InitSearch(url, (err, store) => {
+  InitSearch(url, { cacheExpiration: isNaN(cacheTime) ? undefined : cacheTime }, (err, store) => {
     if (err) {
       fireError('Error loading search index: ' + err)
       return

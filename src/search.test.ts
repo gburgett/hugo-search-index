@@ -33,6 +33,7 @@ describe('search.js bundle', () => {
       done()
     })
     script.setAttribute('data-search-index', '/base/src/lib/search/test_search_index')
+    script.setAttribute('data-cache-time', '5000')
     script.src = '/base/src/search.ts'
     document.body.appendChild(script)
   })
@@ -52,6 +53,13 @@ describe('search.js bundle', () => {
 
     // assert
     expect(store).to.not.be.null
+
+    const location = localStorage.getItem('hugo-search-index.location')
+    expect(location).to.equal('../test_search_index-hash.gz')
+
+    const expiresAt = localStorage.getItem('hugo-search-index.expires')
+    const expectedExpiry = Date.now() + 5000
+    expect(parseInt(expiresAt, 10)).to.be.within(expectedExpiry - 100, expectedExpiry + 100)
   })
 
   function doSearch(query: string) {
