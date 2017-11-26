@@ -18,19 +18,21 @@ const libProj = ts.createProject('tsconfig.json', {
   target: "es3"        // can't guarantee the library files get loaded by a babel loader
 })
 
+gulp.task('default', ['build'])
+
 gulp.task('build', ['build-gulp', 'build-lib', 'build-dist'])
 
-gulp.task('build-gulp', () => {
-  return gulp.src(['src/gulp/**/*.ts', '!src/**/*.test.ts'])  // all ts files in the gulp folder excluding test
-      .pipe(gulpProj())
-      .pipe(gulp.dest('gulp'))
+gulp.task('build-gulp', (done) => {
+  gulp.src(['src/gulp/**/*.ts', '!src/**/*.test.ts'])  // all ts files in the gulp folder excluding test
+      .pipe(gulpProj()).on('error', done)
+      .pipe(gulp.dest('gulp')).on('end', done)
 })
 
-gulp.task('build-lib', () => {
-  return gulp.src(['src/lib/**/*.ts', '!src/**/*.test.ts'])  // all ts files in the lib folder excluding test
+gulp.task('build-lib', (done) => {
+  gulp.src(['src/lib/**/*.ts', '!src/**/*.test.ts'])  // all ts files in the lib folder excluding test
         .pipe(debug())
-        .pipe(libProj())
-        .pipe(gulp.dest('lib'))
+        .pipe(libProj()).on('error', done)
+        .pipe(gulp.dest('lib')).on('end', done)
 
 })
 
