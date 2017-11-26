@@ -54,7 +54,7 @@ export interface IInitSearchOptions {
   cacheExpiration?: number
 }
 
-type InitSearchCallback = (err, store?: SearchStore) => void
+export type InitSearchCallback = (err, store?: SearchStore) => void
 
 export function InitSearch(indexUrl: string, optionsOrCb: IInitSearchOptions | InitSearchCallback, cb?: InitSearchCallback) {
   const options: IInitSearchOptions = {
